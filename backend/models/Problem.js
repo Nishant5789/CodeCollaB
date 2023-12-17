@@ -1,19 +1,19 @@
 const { ObjectId } = require("bson");
 const mongoose = require("mongoose");
 
+
 const problemSchema = mongoose.Schema(
     {
         ProblemStatement: {
             type: String,
         },
-        TopicName: {
-            type: String,
-        },
+        TopicName: { type: [{ type: String, enum: ["String", "Array", "Binary Search", "Math", "Graphs", "Trees", "DP", "Recursion"] }] },
         Accuracy: {
-            type: String,
+            type: Number,
         },
         DifficultyLevel: {
             type: String,
+            enum: ["Easy", "Medium", "Hard"],
         },
         InputFormat: {
             type: [String],
@@ -30,7 +30,7 @@ const problemSchema = mongoose.Schema(
     },
     {
         timestamps: true,
-    }  
+    }
 );
 
 const virtualId = problemSchema.virtual('id');
