@@ -16,6 +16,23 @@ module.exports.AddedProblem = async (req, res, next)=>{
     }
 }
 
+module.exports.checkJobStatus =  async (req, res) => {
+    const jobId = req.query.jobId;
+  
+    if (jobId === undefined) {
+      return res.status(400).json({ success: false, error: "missing id query param" });
+    }
+  
+    const job = await Job.findById(jobId);
+  
+    if (job === undefined) {
+      return res.status(400).json({ success: false, error: "couldn't find job" });
+    }
+  
+    return res.status(200).json({ success: true, job });
+  }
+  
+
 module.exports.executeCode = async(req, res, next)=>{
 
     const { Language = "cpp", ProblemId, codeData } = req.body;

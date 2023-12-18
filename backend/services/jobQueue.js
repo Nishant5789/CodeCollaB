@@ -4,7 +4,7 @@ const Job = require("../models/Job");
 const { executeCpp } = require("./executeCpp");
 
 const jobQueue = new Queue("job-runner-queue");
-const NUM_WORKERS = 2;
+const NUM_WORKERS = 5;
 
 jobQueue.process(NUM_WORKERS, async ({ data }) => {
   console.log("assigend job", data);
