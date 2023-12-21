@@ -1,5 +1,6 @@
-const { ObjectId } = require("bson");
 const mongoose = require("mongoose");
+const {Schema} = mongoose;
+
 
 const userSchema = mongoose.Schema({
         UserName: {
@@ -37,6 +38,7 @@ const userSchema = mongoose.Schema({
             type: Buffer,
             required: [true, " Please add your password. "]
         },
+        ExecutionJobs:[{ type: Schema.Types.ObjectId, ref:'Job' }],
         salt: Buffer
     },
     {
