@@ -19,10 +19,11 @@ const jwt = require('jsonwebtoken');
 // define imports
 const port = process.env.PORT || 5001;
 const { sanitizeUser, isAuth, cookieExtractor } = require('./services/common');
-const User = require("./models/UserModal");
+const User = require("./models/User");
 
 // import routes
 const authRoute = require('./routes/auth');
+const codeRunnerRoute = require('./routes/codeRunner')
 
 
 const app = express();
@@ -50,6 +51,8 @@ app.get('/', (req, res) => {
     res.send("connected");
 });
 app.use('/auth', authRoute);
+app.use('/codeRunner', codeRunnerRoute);
+
 
 
 // handle login 
