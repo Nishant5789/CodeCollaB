@@ -4,22 +4,20 @@ import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
 import { gettoastOptions, useStyles } from '../../../app/constant';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, Navigate } from "react-router-dom";
-import { checkUserAsync, loginUserAsync, selectError, selectLoggedInUser } from "../authSlice";
+import { Link } from "react-router-dom";
+import { loginUserAsync, selectError } from "../authSlice";
 import { Grid, Paper, Typography, Avatar, Box, TextField, FormControlLabel, Checkbox, Button } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 import Copyright from "./Copyright";
 import LOGO from '../../../app/LOGO.png'
 
 const Login = () => {
-//   const selectErrorMsg = useSelector(selectError);
-//   const user = useSelector(selectLoggedInUser);
-  const selectErrorMsg = "";
-  const user = "";
-//   if(selectError!=="") {
-//     toast.error(selectErrorMsg, gettoastOptions());
-//   }
   const dispatch = useDispatch();
+  const selectErrorMsg = useSelector(selectError);
+
+  if(selectError!=="") {
+    toast.error(selectErrorMsg, gettoastOptions());
+  }
   const loginObject = {
     username: "",
     password: "",
@@ -28,7 +26,7 @@ const Login = () => {
   const [loginData, setloginData] = useState(loginObject);
 
   const handleChange = (event) => {
-    console.log(loginData);
+    // console.log(loginData);
     setloginData({ ...loginData, [event.target.name]: event.target.value });
   }
 
@@ -58,7 +56,7 @@ const Login = () => {
     if (handleValidation({ UserName, Password })) {
       console.log("validated");
       console.log({username: UserName, password: Password});
-    //   dispatch(loginUserAsync({ username: UserName, password: Password}));
+      dispatch(loginUserAsync({ username: UserName, password: Password}));
     }
   };
 
@@ -66,7 +64,6 @@ const Login = () => {
   const paperStyle = { padding: '20px 15px', width: 350, margin: "0px auto" }
   return (
     <>
-    {/* {user && <Navigate to="/" replace={true}/>} */}
     <Grid>
             <div className={classes.background}></div>
             <Paper elevation={18} style={paperStyle}>
