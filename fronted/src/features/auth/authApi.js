@@ -35,7 +35,6 @@ export function checkUser(loginInfo) {
 
 
 export function loginUser(loginInfo) {
-
     console.log(loginInfo);
     return new Promise(async (resolve, reject) => {
       try {

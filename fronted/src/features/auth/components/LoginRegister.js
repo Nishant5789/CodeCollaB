@@ -1,8 +1,12 @@
 import React from "react";
 import { useState } from "react";
 import { Tab, Tabs, Typography, Box } from "@mui/material";
+import { Navigate } from "react-router-dom";
 import Login from "./Login";
 import Register from "./Register";
+import { useSelector } from 'react-redux';
+import {  selectLoggedInUser } from "../authSlice";
+
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -26,11 +30,15 @@ function CustomTabPanel(props) {
 
 function LoginRegister() {
     const [value, setValue] = useState(0);
+    const user = useSelector(selectLoggedInUser);
+
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
     const tabStyle = { width: 380, margin: "50px auto 0px auto" }
     return (
+        <>
+        {user && <Navigate to="/" replace={true} />}
         <div>
             <div style={tabStyle}>
                 <Tabs variant="fullWidth" value={value} onChange={handleChange} aria-label="disabled tabs example">
@@ -46,6 +54,7 @@ function LoginRegister() {
                 <Register handleChange={handleChange}/>
             </CustomTabPanel>
         </div>
+        </>
     );
 }
 
