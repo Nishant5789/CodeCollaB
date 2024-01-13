@@ -61,14 +61,14 @@ const Login = () => {
   };
 
   const classes = useStyles();
-  const paperStyle = { padding: '20px 15px', width: 350, margin: "0px auto" }
+  const paperStyle = { padding: '20px 15px', width: 500, margin: "0px auto" }
   return (
     <>
     <Grid>
             <div className={classes.background}></div>
             <Paper elevation={18} style={paperStyle}>
                 <Grid align="center">
-                    <Avatar sx={{ width:100, height:100, my:1, bgcolor:'palegoldenrod' }}> <img src={LOGO} alt="logo" style={{ width: '100%', height: 'auto'}} ></img> </Avatar>
+                    <Avatar sx={{ width:100, height:100, my:2, bgcolor:'palegoldenrod' }}> <img src={LOGO} alt="logo" style={{ width: '100%', height: 'auto'}} ></img> </Avatar>
                     <Typography component= "h1" variant="h5" style={{marginBottom:'2px'}}>CodeCollab</Typography>
                     <Typography component="h1" variant="h5" style={{marginTop:'10px'}}>Login</Typography>
                     <Box component="form" noValidate sx={{ mt: 4 }}>
@@ -112,9 +112,9 @@ const Login = () => {
                             </Link>
                         </Grid>
                         <Grid item xs={6}>
-                            {/* <Link href="#" onClick={() => handleChange('event', 1)} variant="body2"> */}
+                            <Link href="#" onClick={() => handleChange('event', 1)} variant="body2">
                                 No account? Sign up
-                            {/* </Link> */}
+                            </Link>
                         </Grid>
                     </Grid>
                 </Grid>
