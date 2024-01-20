@@ -17,6 +17,7 @@ function App() {
       <Route path="/Auth" element={<LoginRegister/>}/>
       {/* <Route path="/" element={<Protected><Home/></Protected>}/> */}
       <Route path="/:ProblemId" element={<Editor/>}/>
+      {/* <Route path="/realtimeditor" element={<ProblemPage/>}/> */}
     </Routes>   
   </BrowserRouter>
   );

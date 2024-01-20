@@ -1,127 +1,90 @@
-import { useEffect, useState } from 'react';
-import '../Styles/Monaco.css';
-import Editor from "@monaco-editor/react";
-import Navbar from './Navbar';
-import Axios from 'axios';
-import spinner from '../../../app/spinner.svg';
-import { useDispatch, useSelector } from 'react-redux';
-import { ExcuteCodeAsync, selectJobId } from '../codeSlice';
-import axios from 'axios';
+import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import Monaco from '../features/codeeditor/components/Monaco'
+import {  useDispatch, useSelector } from "react-redux";
+import { fetchProblemAsync, selectProblemStatement } from '../features/codeeditor/codeSlice';
 
-function App({ProblemId}) {
-	const dispatch = useDispatch();
 
-	const JobId = useSelector(selectJobId);
-	const [userCode, setUserCode] = useState(``);
-	const [userLang, setUserLang] = useState("cpp");
-	const [userTheme, setUserTheme] = useState("vs-dark");
-	const [fontSize, setFontSize] = useState(20);
-	const [userInput, setUserInput] = useState("");
-	const [userOutput, setUserOutput] = useState("");
-	const [status, setStatus] = useState("");
-	const [loading, setLoading] = useState(false);
-	const [isPolling, setIsPolling] = useState(false);
+const Editor = () => {
+    const {ProblemId} = useParams();
+    console.log(ProblemId);
+    const dispatch = useDispatch();
 
-	const options = {
-		fontSize: fontSize
-	}
+    const ProblemData = useSelector(selectProblemStatement);
+    console.log(ProblemData);
+    const {ProblemStatement, InputFormat, OutputFormat, TestCasesInput, TestCasesOutput} = ProblemData;
 
-	function compile() {
-		setLoading(true);
-		if (userCode === ``) {
-			return
-		}
-		dispatch(ExcuteCodeAsync({
-			ProblemId,
-			Language:userLang,
-			codeData:userCode
-		}))
-		setIsPolling(true);
-	}
+  useEffect(()=>{
+    // console.log(ProblemId);
+    if(ProblemId)
+      dispatch(fetchProblemAsync("657eb723346bbf7e6d727d81"));
+  },[ProblemId])
 
-	// Function to clear the output screen
-	function clearOutput() {
-		setUserOutput("");
-	}
+  return (
+    <div className="">
+    <div className="flex flex-wrap">
+      {/* Left column for problem details */}
+      <div className="w-full p-4 md:w-2/5">
+        <div className="mb-4">
+          <h2 className="text-2xl font-bold">Problem Name</h2>
+          <p className='p-2'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aut consequuntur id neque aperiam illum itaque odio. Deleniti, possimus iste? Totam minima, dignissimos voluptas, exercitationem qui molestias impedit, quam delectus sequi iusto doloremque autem nostrum..</p>
+        </div>
+        <div className="mb-4">
+          <h2 className="text-2xl font-bold">Problem Statement</h2>
+          <p className='p-2'>Your problem statement goes here.</p>
+        </div>
+        <div className="mb-4">
+          <h2 className="text-2xl font-bold">Input Format</h2>
+          <p className='p-2'>Your input format goes here.</p>
+        </div>
+        <div className="mb-4">
+          <h2 className="text-2xl font-bold">Output Format</h2>
+          <p className='p-2'>Your output format goes here.</p>
+        </div>
+      </div>
 
-	useEffect(()=>{
-		if(JobId!=="" && isPolling){
-		const pollInterval = setInterval(async () => {
-			const { data: statusRes } = await axios.get(
-				`http://localhost:8080/codeRunner/status?jobId=${JobId}`,
-				);
-				const { success, job, error } = statusRes;
-				console.log(success);
-			if (success) {
-			  const { Status: jobStatus, Output: jobOutput } = job;
-			  console.log(jobStatus);
-			  if (jobStatus === "pending") return;
-			  console.log("done");
-			  setUserOutput(jobOutput);
-			  setStatus("executed");
-			  setIsPolling(false);
-			  setLoading(false);
-			  clearInterval(pollInterval);
-			} else {
-			  console.error(error);
-			  setUserOutput(error);
-			  setStatus("Bad request");
-			  setIsPolling(false);
-			  setLoading(false);
-			  clearInterval(pollInterval);
-			}
-		}, 1000);
-	}
-},[JobId])
-
-	return (
-		<div className="App pb4-">
-			<Navbar
-				userLang={userLang} setUserLang={setUserLang}
-				userTheme={userTheme} setUserTheme={setUserTheme}
-				fontSize={fontSize} setFontSize={setFontSize}
-			/>
-			<div className="main ">
-				<div className="left-container">
-					<Editor
-						options={options}
-						height="calc(90vh - 50px)"
-						width="100%"
-						theme={userTheme}
-						language={userLang}
-						defaultLanguage="cpp"
-						defaultValue="# Enter your code here"
-						onChange={(value) => { setUserCode(value) }}
-					/>
-					<button className="run-btn" onClick={() => compile()}>
-						Run
-					</button>
-				</div>
-				<div className="right-container">
-					<h4>Input:</h4>
-					<div className="input-box">
-						<textarea id="code-inp" onChange=
-							{(e) => setUserInput(e.target.value)}>
-						</textarea>
-					</div>
-					<h4>Output: {status!=="" ? status : null} </h4>
-					{loading ? (
-						<div className="spinner-box">
-							<img src={spinner} alt="Loading..." />
-						</div>
-					) : (
-						<div className="output-box">
-							<pre>{userOutput} </pre>
-							<button onClick={() => { clearOutput() }}
-								className="clear-btn">
-								Clear
-							</button>
-						</div>
-					)}
-				</div>
-			</div>
-		</div>
-	);
+      {/* Right column for code editor */}
+      <div className="w-full md:w-3/5">
+        <Monaco />
+      </div>
+    </div>
+  </div>
+  )
 }
 
-export default App;
+export default Editor
+
+    // <div>
+    //   {
+    //    Object.keys(ProblemData).length &&  <div className='w-full m-8'>
+    //     <h1 className='text-center font-sans'>ProblemStatement</h1>
+    //     <ul className='space-y-4  '>
+    //       <li>
+    //         <h1 className='font-bold'>ProblemStatement</h1>
+    //         <p className='px-4'>{ProblemStatement}</p>
+    //       </li>
+    //       <li>
+    //         <h1 className='font-bold'>InputFormat</h1>
+    //         <p className='px-4'>{InputFormat[0]}</p>
+    //       </li>
+    //       <li>
+    //         <h1 className='font-bold'>OutputFormat</h1>
+    //         <p className='px-4'>{OutputFormat}</p>
+    //       </li>
+    //     </ul>
+    //     <ul className='border-2 border-gray-600 p-4 space-y-4 mb-8'>
+    //       <li>
+    //         <h1 className='font-bold'>input</h1>
+    //         <p>{TestCasesInput[0]}</p>
+    //       </li>
+    //       <li>
+    //         <h1 className='font-bold'>output</h1>
+    //         <p>{TestCasesOutput[0]}</p>
+    //       </li>
+    //     </ul>
+    //   </div>
+    //   }
+    //   <div>
+    //     <Monaco ProblemId={ProblemId}/>
+    //   </div>
+    // </div>
