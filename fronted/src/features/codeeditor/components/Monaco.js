@@ -7,6 +7,7 @@ import spinner from '../../../app/spinner.svg';
 import { useDispatch, useSelector } from 'react-redux';
 import { ExcuteCodeAsync, selectJobId } from '../codeSlice';
 import axios from 'axios';
+import bolilerplate from '../../../app/boilerplate';
 
 function App({ProblemId}) {
 	const dispatch = useDispatch();
@@ -19,6 +20,7 @@ function App({ProblemId}) {
 	const [userInput, setUserInput] = useState("");
 	const [userOutput, setUserOutput] = useState("");
 	const [status, setStatus] = useState("");
+	const [executiontime, setExecutiontime] = useState(0);
 	const [loading, setLoading] = useState(false);
 	const [isPolling, setIsPolling] = useState(false);
 
@@ -28,9 +30,11 @@ function App({ProblemId}) {
 
 	function compile() {
 		setLoading(true);
+		// console.log(userCode);
 		if (userCode === ``) {
 			return
 		}
+
 		dispatch(ExcuteCodeAsync({
 			ProblemId,
 			Language:userLang,
@@ -53,11 +57,20 @@ function App({ProblemId}) {
 				const { success, job, error } = statusRes;
 				console.log(success);
 			if (success) {
-			  const { Status: jobStatus, Output: jobOutput } = job;
+			  const { Status: jobStatus, Output: jobOutput, SubmittedAt, CompletedAt, StartedAt} = job;
 			  console.log(jobStatus);
 			  if (jobStatus === "pending") return;
-			  console.log("done");
-			  setUserOutput(jobOutput);
+			//   console.log("done");
+
+			  if(jobStatus==="success"){
+				setUserOutput(jobOutput);
+				const time1 = new Date(StartedAt);
+				const time2 = new Date(CompletedAt);
+				setExecutiontime(Math.abs(time2-time1));
+			  }else{
+				setUserOutput(jobOutput);
+			  }
+
 			  setStatus("executed");
 			  setIsPolling(false);
 			  setLoading(false);
@@ -90,27 +103,28 @@ function App({ProblemId}) {
 						theme={userTheme}
 						language={userLang}
 						defaultLanguage="cpp"
-						defaultValue="# Enter your code here"
+						value={userLang==="cpp"?bolilerplate.cpp:bolilerplate.python}
 						onChange={(value) => { setUserCode(value) }}
 					/>
-					<button className="btn btn-primary px-4" onClick={() => compile()}>
+					<button className="btn btn-outline btn-success ml-2 px-4" onClick={() => compile()}>
 						Run
 					</button>
 				</div>
-				<div className="">
-					<h4>Input:</h4>
+				<div className="px-4 font-bold text-black">
+					<h4 className=''>Input:</h4>
 					<div className="input-box">
-						<textarea id="code-inp" className='border-2 border-gray-500 p-2 w-11/12' onChange=
+						<textarea id="code-inp" className='border-2 border-gray-600 p-2 w-11/12' onChange=
 							{(e) => setUserInput(e.target.value)}>
 						</textarea>
 					</div>
-					<h4>Output: {status!=="" ? status : null} </h4>
-					{loading ? (
+					<h4>Output: {status!=="" ? status : null} {status!==""  && executiontime} </h4>
+					{
+					  loading ? (
 						<div className="flex justify-center">
 							<img src={spinner}  alt="Loading..." />
 						</div>
 					) : (
-						<div className="">
+						<div>
 							<p className='p-2'>{userOutput} </p>
 							<button className="px-4 btn btn-warning" onClick={() => { clearOutput() }}>
 								Clear
