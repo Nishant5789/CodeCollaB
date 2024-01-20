@@ -9,6 +9,8 @@ import Home from "./pages/Home"
 import LoginRegister from "./features/auth/components/LoginRegister";
 import Monaco from "./features/codeeditor/components/Monaco"
 import ProblemPage from './pages/ProblemPage';
+import RealtimeIDE from './features/realtimeeditor/RealtimeIDE';
+import Roomeditor from './features/realtimeeditor/components/Roomeditor';
 
 function App() {
   return (
@@ -16,6 +18,9 @@ function App() {
     <Routes>
       <Route path="/Auth" element={<LoginRegister/>}/>
       <Route path="/:ProblemId" element={<ProblemPage/>}/>
+      <Route path="/realtimeIDE" element={<RealtimeIDE/>}/>
+      <Route path="/realtimeIDE/:RoomId" element={<Roomeditor/>}/>
+
     </Routes>   
   </BrowserRouter>
   );
