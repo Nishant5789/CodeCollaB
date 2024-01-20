@@ -53,8 +53,6 @@ app.get('/', (req, res) => {
 app.use('/auth', authRoute);
 app.use('/codeRunner', codeRunnerRoute);
 
-
-
 // handle login 
 passport.use(new LocalStrategy(
     // { usernameField: 'UserName', passwordField: "Password" },
