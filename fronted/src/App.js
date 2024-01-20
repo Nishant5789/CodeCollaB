@@ -8,16 +8,14 @@ import Protected from "./features/auth/components/Protected";
 import Home from "./pages/Home"
 import LoginRegister from "./features/auth/components/LoginRegister";
 import Monaco from "./features/codeeditor/components/Monaco"
-import Editor from './pages/Editor';
+import ProblemPage from './pages/ProblemPage';
 
 function App() {
   return (
     <BrowserRouter>
     <Routes>
       <Route path="/Auth" element={<LoginRegister/>}/>
-      {/* <Route path="/" element={<Protected><Home/></Protected>}/> */}
-      <Route path="/:ProblemId" element={<Editor/>}/>
-      {/* <Route path="/realtimeditor" element={<ProblemPage/>}/> */}
+      <Route path="/:ProblemId" element={<ProblemPage/>}/>
     </Routes>   
   </BrowserRouter>
   );
