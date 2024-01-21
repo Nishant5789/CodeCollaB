@@ -1,6 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv").config();
-// const socket = require("socket.io");
+const socket = require("socket.io");
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const connectDb = require("./config/dbConnection");
@@ -23,7 +23,8 @@ const User = require("./models/User");
 
 // import routes
 const authRoute = require('./routes/auth');
-const codeRunnerRoute = require('./routes/codeRunner')
+const codeRunnerRoute = require('./routes/codeRunner');
+const ACTIONS = require("./services/ACTIONS");
 
 
 const app = express();
@@ -115,6 +116,66 @@ passport.deserializeUser(function (user, cb) {
     });
 });
 
-app.listen(process.env.SERVER_PORT, () => {
+const server = app.listen(process.env.SERVER_PORT, () => {
     console.log(`listening on port  ${process.env.SERVER_PORT}`);
 })
+
+const io = socket(server, {
+    cors: {
+      origin: "http://localhost:3000",
+      credentials: true,
+    },
+});
+
+const userSocketMap = {};
+function getAllConnectedClients(roomId) {
+    // Map
+    return Array.from(io.sockets.adapter.rooms.get(roomId) || []).map(
+        (socketId) => {
+            return {
+                socketId,
+                username: userSocketMap[socketId],
+            };
+        }
+    );
+}
+
+io.on('connection', (socket) => {
+
+    console.log('socket connected', socket.id);
+
+    socket.on(ACTIONS.JOIN, ({ roomId, username }) => {
+        userSocketMap[socket.id] = username;
+        socket.join(roomId);
+        const clients = getAllConnectedClients(roomId);
+        console.log(clients);
+        clients.forEach(({ socketId }) => {
+            io.to(socketId).emit(ACTIONS.JOINED, {
+                clients,
+                username,
+                socketId: socket.id,
+            });
+        });
+    });
+
+    socket.on(ACTIONS.CODE_CHANGE, ({ roomId, code }) => {
+        socket.in(roomId).emit(ACTIONS.CODE_CHANGE, { code });
+    });
+
+    socket.on(ACTIONS.SYNC_CODE, ({ socketId, code }) => {
+        io.to(socketId).emit(ACTIONS.CODE_CHANGE, { code });
+    });
+
+    socket.on('disconnecting', () => {
+        const rooms = [...socket.rooms];
+        rooms.forEach((roomId) => {
+            socket.in(roomId).emit(ACTIONS.DISCONNECTED, {
+                socketId: socket.id,
+                username: userSocketMap[socket.id],
+            });
+        });
+        delete userSocketMap[socket.id];
+        socket.leave();
+    });
+});
+
