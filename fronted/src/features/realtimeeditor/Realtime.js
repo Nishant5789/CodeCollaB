@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import LOGO from '../../app/LOGO.png'
 import { v4 as uuidV4 } from 'uuid';
 import { ToastContainer, toast } from "react-toastify";
@@ -24,12 +24,13 @@ const RealtimeIDE = () => {
         return;
     }
     // Redirect
-    // navigate(`/editor/${roomId}`, {
-    //     state: {
-    //         username,
-    //     },
-    // });
+    navigate(`/realtimeditor/${roomId}`, {
+        state: {
+            username,
+        },
+    });
   };
+
   const handleInputEnter = (e) => {
     if (e.code === 'Enter') {
         joinRoom();
