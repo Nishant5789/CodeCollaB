@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import '../Styles/Monaco.css';
 import Editor from "@monaco-editor/react";
-import Navbar from './Navbar';
+import Topbar from './Topbar';
 import Axios from 'axios';
 import spinner from '../../../app/spinner.svg';
 import { useDispatch, useSelector } from 'react-redux';
@@ -34,11 +34,16 @@ function App({ProblemId}) {
 		if (userCode === ``) {
 			return
 		}
-
+		let isUserInput = false;
+		if(userInput!==""){
+			isUserInput=true;
+		}
 		dispatch(ExcuteCodeAsync({
 			ProblemId,
 			Language:userLang,
-			codeData:userCode
+			codeData:userCode,
+			userInput,
+			isUserInput
 		}))
 		setIsPolling(true);
 	}
@@ -89,7 +94,7 @@ function App({ProblemId}) {
 
 	return (
 		<div className="mb-4">
-			<Navbar
+			<Topbar
 				userLang={userLang} setUserLang={setUserLang}
 				userTheme={userTheme} setUserTheme={setUserTheme}
 				fontSize={fontSize} setFontSize={setFontSize}

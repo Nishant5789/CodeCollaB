@@ -17,8 +17,8 @@ function App() {
     <BrowserRouter>
     <Routes>
       <Route path="/" element={<Home/>}/>
-      <Route path="/Auth" element={<LoginRegister/>}/>
       <Route path="/:ProblemId" element={<ProblemPage/>}/>
+      <Route path="/Auth" element={<LoginRegister/>}/>
       <Route path="/realtimeIDE" element={<Realtime/>}/>
       <Route path="/realtimeditor/:roomId" element={<Roomeditor/>}/>
     </Routes>   

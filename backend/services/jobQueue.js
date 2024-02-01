@@ -17,7 +17,7 @@ jobQueue.process(NUM_WORKERS, async ({ data }) => {
     let Output;
     job["StartedAt"] = new Date();
     if (job.Language === "cpp") {
-      Output = await executeCpp(job.Filepath, data.ProblemId);
+      Output = await executeCpp(job.Filepath, data.ProblemId, data.userInput);
       // await setTimeout(()=>{
       //   console.log("executed cpp");
       // }, 2000)
@@ -44,10 +44,11 @@ jobQueue.on("failed", (error) => {
   console.error(error.data.id, error.failedReason);
 });
 
-const addJobToQueue = async (jobId, ProblemId) => {
+const addJobToQueue = async (jobId, ProblemId, userInput) => {
   jobQueue.add({
     id: jobId,
-    ProblemId
+    ProblemId,
+    userInput
   });
   console.log("added in queue", jobId);
 };

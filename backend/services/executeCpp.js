@@ -9,15 +9,15 @@ if (!fs.existsSync(outputPathDir)) {
   fs.mkdirSync(outputPathDir, { recursive: true });
 }
 
-const executeCpp =  (Filepath, ProblemId) => {  
+const executeCpp =  (Filepath, ProblemId, userInput) => {  
   const jobId = path.basename(Filepath).split(".")[0];
   const outFilePath = path.join(outputPathDir, `${jobId}.out`);
-
   
   return new Promise(async(resolve, reject) => {
     
     const Testcase = await Problem.findById(ProblemId);
-    const TestcaseData = Testcase.TestCasesInput[0];
+    console.log("userInput",userInput);
+    const TestcaseData = userInput===null?Testcase.TestCasesInput[0]:userInput;
     console.log("TestcaseData", TestcaseData);
 
     console.log(`compile flie using command : g++ ${Filepath} -o ${outFilePath}`);
