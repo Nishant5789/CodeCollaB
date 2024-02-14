@@ -9,6 +9,7 @@ import Home from "./pages/Home"
 import LoginRegister from "./features/auth/components/LoginRegister";
 import Monaco from "./features/codeeditor/components/Monaco"
 import Editor from './pages/Editor';
+import ProfilePage from './features/auth/components/ProfilePage';
 
 function App() {
   return (
@@ -16,7 +17,8 @@ function App() {
     <Routes>
       <Route path="/Auth" element={<LoginRegister/>}/>
       {/* <Route path="/" element={<Protected><Home/></Protected>}/> */}
-      <Route path="/:ProblemId" element={<Editor/>}/>
+      <Route path="/ProblemId" element={<Editor/>}/>
+      <Route path ="/Profile" element={<ProfilePage/>}/>
     </Routes>   
   </BrowserRouter>
   );
