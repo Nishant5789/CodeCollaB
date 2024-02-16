@@ -9,7 +9,7 @@ import Home from "./pages/Home"
 import LoginRegister from "./features/auth/components/LoginRegister";
 import Monaco from "./features/codeeditor/components/Monaco"
 import Editor from './pages/Editor';
-import ProfilePage from './features/auth/components/ProfilePage';
+import ProfilePage from './features/Profile-Page/ProfilePage';
 
 function App() {
   return (
