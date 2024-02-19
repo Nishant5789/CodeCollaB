@@ -15,6 +15,18 @@ module.exports.AddedProblem = async (req, res, next)=>{
         return res.status(400).json(error);
     }
 }
+module.exports.fetchProblem = async (req, res, next)=>{
+  const {ProblemId} = req.params;
+  console.log(ProblemId);
+  try {
+    const problem = await Problem.findById(ProblemId);
+      return res.status(201).json(problem);
+  } catch (error) {
+      console.log(error);
+      return res.status(400).json(error);
+  }
+}
+
 
 module.exports.checkJobStatus =  async (req, res) => {
     const jobId = req.query.jobId;

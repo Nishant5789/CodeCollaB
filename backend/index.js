@@ -1,6 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv").config();
-// const socket = require("socket.io");
+const socket = require("socket.io");
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const connectDb = require("./config/dbConnection");
@@ -23,7 +23,8 @@ const User = require("./models/User");
 
 // import routes
 const authRoute = require('./routes/auth');
-const codeRunnerRoute = require('./routes/codeRunner')
+const codeRunnerRoute = require('./routes/codeRunner');
+const ACTIONS = require("./services/ACTIONS");
 
 
 const app = express();
@@ -37,7 +38,7 @@ opts.secretOrKey = process.env.SECRET_KEY;
 
 // midleware
 app.use(express.json());
-// app.use(express.static("build"));
+app.use(express.static("build"));
 app.use(cookieParser());
 app.use(session({
     secret: 'keyboard cat',
@@ -53,20 +54,19 @@ app.get('/', (req, res) => {
 app.use('/auth', authRoute);
 app.use('/codeRunner', codeRunnerRoute);
 
-
-
 // handle login 
 passport.use(new LocalStrategy(
-    { usernameField: 'Email', passwordField: "Password" },
-    async function (Email, Password, done) {
+    // { usernameField: 'UserName', passwordField: "Password" },
+    async function (username, password, done) {
         try {
-            // console.log(Email, Password);
-            const user = await User.findOne({ Email: Email });
+            console.log(username, password);
+            const user = await User.findOne({ UserName:username });
+            console.log(user);
             if (user == null) {
                 // done(iserror, isautorised, error message)
                 return done(null, false, { message: 'invalid credentials' });
             }
-            crypto.pbkdf2(Password, user.salt, 310000, 32, 'sha256', async function (err, hashedPassword) {
+            crypto.pbkdf2(password, user.salt, 310000, 32, 'sha256', async function (err, hashedPassword) {
                 if (!crypto.timingSafeEqual(user.Password, hashedPassword)) {
                     return done(null, false, { message: 'invalid credentials' });
                 }
@@ -76,7 +76,7 @@ passport.use(new LocalStrategy(
         } catch (error) {
             console.log(error);
             done(error)
-            // return res.status(400).json(error);
+            return res.status(400).json(error);
         }
     }
 ));
@@ -116,6 +116,66 @@ passport.deserializeUser(function (user, cb) {
     });
 });
 
-app.listen(process.env.SERVER_PORT, () => {
+const server = app.listen(process.env.SERVER_PORT, () => {
     console.log(`listening on port  ${process.env.SERVER_PORT}`);
 })
+
+const io = socket(server, {
+    cors: {
+      origin: "http://localhost:3000",
+      credentials: true,
+    },
+});
+
+const userSocketMap = {};
+function getAllConnectedClients(roomId) {
+    // Map
+    return Array.from(io.sockets.adapter.rooms.get(roomId) || []).map(
+        (socketId) => {
+            return {
+                socketId,
+                username: userSocketMap[socketId],
+            };
+        }
+    );
+}
+
+io.on('connection', (socket) => {
+
+    console.log('socket connected', socket.id);
+
+    socket.on(ACTIONS.JOIN, ({ roomId, username }) => {
+        userSocketMap[socket.id] = username;
+        socket.join(roomId);
+        const clients = getAllConnectedClients(roomId);
+        console.log(clients);
+        clients.forEach(({ socketId }) => {
+            io.to(socketId).emit(ACTIONS.JOINED, {
+                clients,
+                username,
+                socketId: socket.id,
+            });
+        });
+    });
+
+    socket.on(ACTIONS.CODE_CHANGE, ({ roomId, code }) => {
+        socket.in(roomId).emit(ACTIONS.CODE_CHANGE, { code });
+    });
+
+    socket.on(ACTIONS.SYNC_CODE, ({ socketId, code }) => {
+        io.to(socketId).emit(ACTIONS.CODE_CHANGE, { code });
+    });
+
+    socket.on('disconnecting', () => {
+        const rooms = [...socket.rooms];
+        rooms.forEach((roomId) => {
+            socket.in(roomId).emit(ACTIONS.DISCONNECTED, {
+                socketId: socket.id,
+                username: userSocketMap[socket.id],
+            });
+        });
+        delete userSocketMap[socket.id];
+        socket.leave();
+    });
+});
+
