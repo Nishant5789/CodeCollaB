@@ -12,3 +12,7 @@ export function fetchCodeStatus(jobId) {
 export function fetchCodeStatement(problemId) {
     return axios.get(`http://localhost:8080/codeRunner/problem/${problemId}`);
 }
+
+export function fetchAllProblems(problemId) {
+    return axios.get(`http://localhost:8080/codeRunner/allProblem`);
+}
