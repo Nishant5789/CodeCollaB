@@ -19,7 +19,11 @@ const Home = () => {
     { name: 'Math', icon: '➗' },
     // Add more categories as needed
   ];
+  const [searchQuery, setSearchQuery] = useState('');
 
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+  };
 
   const problems = [
     { title: '1. Two Sum', accuracy: 80, difficulty: 'Easy', status: 'solved ', topic: 'Array' },
@@ -68,7 +72,7 @@ const Home = () => {
 
   return ( 
     <>
-    <Navbar/>
+    <Navbar onSearch={handleSearch}/>
     <div className="container mx-auto mt-8">
       <h2 className="text-3xl font-extrabold text-black-300 drop-shadow-lg mb-4">Category</h2>
       <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
@@ -87,7 +91,7 @@ const Home = () => {
         ))}
       </div>
       <h2 className="text-3xl font-extrabold text-black-300 drop-shadow-lg mb-4">Problems</h2>
-     <Problems selectedCategory={selectedCategory} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
+     <Problems selectedCategory={selectedCategory} currentPage={currentPage} setCurrentPage={setCurrentPage} searchQuery={searchQuery}/>
       {/* <div className="flex justify-center mt-4">
         {Array.from({ length: chunkedProblems.length }, (_, index) => (
           <button

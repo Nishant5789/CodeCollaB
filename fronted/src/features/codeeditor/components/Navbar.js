@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
-import { MenuIcon, XIcon,SearchIcon } from '@heroicons/react/solid';
+import { MenuIcon, XIcon, SearchIcon } from '@heroicons/react/solid';
 
-const Navbar = () => {
+const Navbar = ({ onSearch }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
+  const [searchInput, setSearchInput] = useState('');
 
+  const handleSearch = () => {
+    onSearch(searchInput);
+  };
   return (
     <nav className="bg-gray-800 text-white p-4  ">
       <div className="container mx-auto flex items-center justify-between">
@@ -18,11 +22,13 @@ const Navbar = () => {
 
         {/* Search Icon */}
         <div className="hidden lg:flex items-center mr-4">
-          <SearchIcon className="h-6 w-6 mr-2" />
+          <SearchIcon className="h-6 w-6 mr-2" onClick={handleSearch} />
           <input
             type="text"
             placeholder="Search"
             className="bg-gray-700 text-white p-2 rounded-md focus:outline-none"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
           />
         </div>
 
