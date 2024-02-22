@@ -3,11 +3,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchAllProblemAsync, selectAllProblems } from '../codeSlice';
 import { Link } from 'react-router-dom';
 
-const Problems = ({selectedCategory, currentPage, setCurrentPage}) => {
+const Problems = ({selectedCategory, currentPage, setCurrentPage, }) => {
 
     const dispatch = useDispatch();
     const problems = useSelector(selectAllProblems);
-    const filteredProblems = selectedCategory ? problems.filter((problem) => problem.topic === selectedCategory): problems;
+    console.log(problems);
+
+    const filteredProblems = selectedCategory ? problems.filter((problem) => problem.TopicName[0] === selectedCategory): problems;
 
     console.log(filteredProblems);
 
@@ -41,7 +43,6 @@ const Problems = ({selectedCategory, currentPage, setCurrentPage}) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1">
     {Object.keys(chunkedProblems).length && chunkedProblems[currentPage]?.map((problem, index) => (
-
     <Link to={`/${problem.id}/`}>
       <div key={index} className="bg-gray-100 text-white p-4 grid grid-cols-1 sm:grid-cols-3 sm:px-12 rounded-md shadow-md mb-4">
         <div className="flex items-center">
@@ -62,7 +63,22 @@ const Problems = ({selectedCategory, currentPage, setCurrentPage}) => {
       </div>
     </Link> 
     ))}
+    <div className="flex justify-center my-4">
+        {Array.from({ length: chunkedProblems.length }, (_, index) => (
+          <button
+            key={index}
+            className={`mx-1 p-2 bg-gray-300 rounded-full hover:bg-gray-500 focus:outline-none ${
+              currentPage === index ? 'bg-gray-500 text-white' : ''
+            }`}
+            onClick={() => handlePageChange(index)}
+            >
+            {index + 1}
+          </button>
+        ))}
+    </div>
   </div>  )
 }
+
+
 
 export default Problems

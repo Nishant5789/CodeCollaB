@@ -38,7 +38,7 @@ opts.secretOrKey = process.env.SECRET_KEY;
 
 // midleware
 app.use(express.json());
-app.use(express.static("build"));
+// app.use(express.static("build"));
 app.use(cookieParser());
 app.use(session({
     secret: 'keyboard cat',

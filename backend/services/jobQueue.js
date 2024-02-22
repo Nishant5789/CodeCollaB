@@ -2,9 +2,34 @@ const Queue = require("bull");
 
 const Job = require("../models/Job");
 const { executeCpp } = require("./executeCpp");
+const Problem = require("../models/Problem");
 
 const jobQueue = new Queue("job-runner-queue");
 const NUM_WORKERS = 5;
+
+const compareStdOutput = async (ProblemId, UserStdOutput)=>{
+  const problem = await Problem.findById(ProblemId);
+  // console.log("problem", problem);
+  const ActualStdOutput = problem.TestCasesOutput;
+  const length = ActualStdOutput.length;
+  const result = Array.from({ length }, () => "Not Executed");
+  // console.log("result",result);
+  console.log("UserStdOutput",UserStdOutput);
+
+  for(let i=0; i<ActualStdOutput.length; i++){
+    console.log(ActualStdOutput[i],UserStdOutput[i]);
+    if(UserStdOutput[i]=="Error"){
+      result[i]="Error";
+    }
+    else if(ActualStdOutput[i].toLowerCase()===UserStdOutput[i].toLowerCase()){
+      result[i]="Correct";
+    }
+    else{
+      result[i]="InCorrect";
+    }
+  }
+  return result;
+}
 
 jobQueue.process(NUM_WORKERS, async ({ data }) => {
   console.log("assigend job", data);
@@ -17,21 +42,30 @@ jobQueue.process(NUM_WORKERS, async ({ data }) => {
     let Output;
     job["StartedAt"] = new Date();
     if (job.Language === "cpp") {
-      Output = await executeCpp(job.Filepath, data.ProblemId, data.userInput);
+      StdOutput = await executeCpp(job.Filepath, data.ProblemId, data.userInput);
       // await setTimeout(()=>{
       //   console.log("executed cpp");
       // }, 2000)
-      console.log("done executed");
+      console.log("done executed", StdOutput);
     } else if (job.Language === "py") {
       // Output = await executePy();
     }
     job["CompletedAt"] = new Date();
     job["Output"] = Output;
+    if(data.userInput==null){
+      job["JobTypeByTestCase"]="MultipleTestCase";
+      job["MultipleTestcaseStdOutput"]= await compareStdOutput(data.ProblemId, StdOutput);
+    }
+    else{
+      job["JobTypeByTestCase"]="SingleTestCase";
+      job["SingleTestcaseStdOutput"]=StdOutput;
+    }
     job["Status"] = "success";
     console.log(job);
     await job.save();
     return true;
   } catch (err) {
+    console.log("err",err);
     job["CompletedAt"] = new Date();
     job["Output"] = JSON.stringify(err);
     job["Status"] = "error";
