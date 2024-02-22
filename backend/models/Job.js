@@ -6,6 +6,10 @@ const jobSchema = mongoose.Schema({
     required: true,
     enum: ["cpp", "py"],
   },
+  JobTypeByTestCase: {
+    type: String,
+    enum: ["SingleTestCase", "MultipleTestCase"],
+  },
   ProblemId: {
     type: String,
     required: true,
@@ -29,9 +33,15 @@ const jobSchema = mongoose.Schema({
     default: "pending",
     enum: ["pending", "success", "error"],
   },
-  Output: {
+  SingleTestcaseStdOutput: {
     type: String,
   },
+  MultipleTestcaseStdOutput:[{
+    type: String
+  }],
+  Output:{
+    type: String
+  }
 });
 
 const virtualId = jobSchema.virtual('id');

@@ -3,8 +3,8 @@ const { executeCode, AddedProblem, fetchAllProblem,fetchProblem, checkJobStatus 
 const router = require('express').Router();
 
 router.post("/executeCode",  executeCode);
-router.get("/allProblem",  fetchAllProblem);
 router.post("/addProblem",  AddedProblem);
+router.get("/allProblem",  fetchAllProblem);
 router.get("/status",  checkJobStatus);
 router.get("/problem/:ProblemId",  fetchProblem);
 

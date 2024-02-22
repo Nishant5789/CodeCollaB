@@ -12,11 +12,11 @@ const Home = () => {
   const [currentPage, setCurrentPage] = useState(0);
 
   const topicCategories = [
-    { name: 'Array', icon: '🔍' },
-    { name: 'Linked List', icon: '🔗' },
-    { name: 'Tree', icon: '🌳' },
-    { name: 'String', icon: '📜' },
-    { name: 'Math', icon: '➗' },
+    { name: 'array', icon: '🔍' },
+    { name: 'graph', icon: '🔗' },
+    { name: 'tree', icon: '🌳' },
+    { name: 'string', icon: '📜' },
+    { name: 'two pointers', icon: '➗' },
     // Add more categories as needed
   ];
   const [searchQuery, setSearchQuery] = useState('');
@@ -68,8 +68,6 @@ const Home = () => {
     { title: '40.Edit Distance', accuracy: 37, difficulty: 'Hard', status: 'hasError ', topic: 'String' },
   ];
 
-  
-
   return ( 
     <>
     <Navbar onSearch={handleSearch}/>
@@ -91,22 +89,9 @@ const Home = () => {
         ))}
       </div>
       <h2 className="text-3xl font-extrabold text-black-300 drop-shadow-lg mb-4">Problems</h2>
-     <Problems selectedCategory={selectedCategory} currentPage={currentPage} setCurrentPage={setCurrentPage} searchQuery={searchQuery}/>
-      {/* <div className="flex justify-center mt-4">
-        {Array.from({ length: chunkedProblems.length }, (_, index) => (
-          <button
-            key={index}
-            className={`mx-1 p-2 bg-gray-300 rounded-full hover:bg-gray-500 focus:outline-none ${
-              currentPage === index ? 'bg-gray-500 text-white' : ''
-            }`}
-            onClick={() => handlePageChange(index)}
-            >
-            {index + 1}
-          </button>
-        ))}
-      </div> */}
+     <Problems selectedCategory={selectedCategory} currentPage={currentPage} setCurrentPage={setCurrentPage}/>  
     </div>
-        </>
+    </>
   );
 };
 
