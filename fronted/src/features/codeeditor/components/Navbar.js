@@ -7,11 +7,7 @@ const Navbar = ({ onSearch }) => {
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
-  const [searchInput, setSearchInput] = useState('');
 
-  const handleSearch = () => {
-    onSearch(searchInput);
-  };
   return (
     <nav className="bg-gray-800 text-white px-4 py-2">
       <div className="container mx-auto flex items-center justify-between">
@@ -20,15 +16,16 @@ const Navbar = ({ onSearch }) => {
           CODECOLLAB
         </a>
         {/* Search Icon */}
-        <div className="hidden lg:flex items-center mr-4">
-          <SearchIcon className="h-6 w-6 mr-2" onClick={handleSearch} />
+        <div className="hidden lg:flex items-center gap-x-2">
           <input
             type="text"
             placeholder="Search"
             className="bg-gray-700 text-white p-2 rounded-md focus:outline-none"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
+            onChange={(e) => {
+              onSearch(e.target.value);
+            }}
           />
+           <SearchIcon className="h-6 w-6 mr-2"  />
         </div>
 
         {/* Mobile Menu Button */}

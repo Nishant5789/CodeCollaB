@@ -14,12 +14,10 @@ const Problems = ({ selectedCategory, currentPage, setCurrentPage, searchQuery }
     setLocalSearchQuery(searchQuery);
   }, [searchQuery]);
 
-  const filteredProblems = selectedCategory
-    ? problems.filter((problem) => problem.topic === selectedCategory)
-    : problems.filter((problem) =>
-      problem.ProblemName.toLowerCase().includes(localSearchQuery.toLowerCase())
-    );
-    console.log(filteredProblems);
+  console.log(localSearchQuery);
+  let filteredProblems = selectedCategory ? problems.filter((problem) => problem.TopicName[0] === selectedCategory): problems;
+  filteredProblems = localSearchQuery!=="" ? filteredProblems.filter((problem)=>problem.ProblemName.toLowerCase().includes(localSearchQuery.toLowerCase())):filteredProblems;
+  console.log(filteredProblems);
   const difficultyColor = (difficulty) => {
     switch (difficulty) {
       case 'Easy':
