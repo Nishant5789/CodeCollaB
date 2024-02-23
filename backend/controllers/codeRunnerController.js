@@ -16,7 +16,6 @@ module.exports.AddedProblem = async (req, res, next)=>{
     }
 }
 module.exports.fetchAllProblem = async (req, res, next)=>{
-
   try {
     const problems = await Problem.find();
       return res.status(200).json(problems);
@@ -31,6 +30,7 @@ module.exports.fetchProblem = async (req, res, next)=>{
   console.log(ProblemId);
   try {
     const problem = await Problem.findById(ProblemId);
+    // console.log(problem);
       return res.status(201).json(problem);
   } catch (error) {
       console.log(error);
@@ -59,7 +59,7 @@ module.exports.checkJobStatus =  async (req, res) => {
 module.exports.executeCode = async(req, res, next)=>{
 
     const { Language = "cpp", ProblemId, codeData, userInput, isUserInput } = req.body;
-    console.log(codeData);
+    // console.log(codeData);
 
     console.log(Language, "Length:", codeData.length);
   
@@ -74,7 +74,7 @@ module.exports.executeCode = async(req, res, next)=>{
     const job = await new Job({ Language, ProblemId, Filepath }).save();
     const jobId = job["id"];
 
-    console.log(isUserInput);
+    // console.log(isUserInput);
     if(isUserInput)
       addJobToQueue(jobId, ProblemId, userInput);
     else

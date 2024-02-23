@@ -66,12 +66,26 @@ const Roomeditor = () => {
     }
     init();
     return () => {
-      // socketRef.current.disconnect();
+      socketRef.current.disconnect();
       // unsubscribe the events
-      // socketRef.current.off(ACTIONS.JOINED);
-      // socketRef.current.off(ACTIONS.DISCONNECTED);
+      socketRef.current.off(ACTIONS.JOINED);
+      socketRef.current.off(ACTIONS.DISCONNECTED);
   };
   },[])
+
+    async function copyRoomId() {
+      try {
+          await navigator.clipboard.writeText(roomId);
+          toast.success('Room ID has been copied to your clipboard');
+      } catch (err) {
+          toast.error('Could not copy the Room ID');
+          console.error(err);
+      }
+  }
+
+  function leaveRoom() {
+      reactNavigator('/');
+  }
 
   if (!location.state) {
       return <Navigate to="/realtimeIDE" />;
@@ -90,21 +104,23 @@ const Roomeditor = () => {
           </div>
           <div className='grid p-2 grid-cols-3 justify-center gap-2 flex-grow text-white'>
             {
-              clients && clients.map((index, clientdata)=> 
-              <div className='flex flex-col items-center h-16'>
-                <div className='bg-blue-500 m-auto p-8 text-3xl rounded-md'>Us</div>
+              clients && clients.map((clientdata, index)=> {
+                // console.log(clientdata);
+                return(<div className='flex flex-col items-center h-16'>
+                <div className='bg-blue-500 m-auto p-2 text-xl  rounded-md'>User</div>
                   <span className='text-black'>{clientdata.username}</span>
                 </div>)
+                })
             }
-          </div>
+            </div>
           <div className='px-4 space-y-3'>
-            <div className='bg-gray-200 hover:bg-gray-300 active:bg-gray-100 px-4 py-2 text-center  rounded-md'>Copy Room ID</div>
-            <div className='bg-green-500 hover:bg-green-600 active:bg-green-400 px-4 py-2 text-center rounded-md'>Leave</div>
+            <div onClick={copyRoomId} className='bg-gray-200 hover:bg-gray-300 active:bg-gray-100 px-4 py-2 text-center  rounded-md'>Copy Room ID</div>
+            <div onClick={leaveRoom} className='bg-green-500 hover:bg-green-600 active:bg-green-400 px-4 py-2 text-center rounded-md'>Leave</div>
           </div>
         </div>
         <div className="col-span-9">
        <TextEditor  
-       socketRef={socketRef} roomId={roomId} onCodeChange={(code) => { codeRef.current = code;}}/>
+       socketRef={socketRef} roomId={roomId} onCodeChange={(code) => { codeRef.current = code}}/>
         </div>
         <ToastContainer/>
     </div>

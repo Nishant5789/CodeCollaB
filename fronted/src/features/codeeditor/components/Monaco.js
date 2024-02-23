@@ -24,6 +24,9 @@ function App({ProblemId}) {
 	const [loading, setLoading] = useState(false);
 	const [isPolling, setIsPolling] = useState(false);
 
+	const [submissionStatus, setSubmissionStatus] = useState([]);
+	const [isSubmissionStatus, setIsSubmissionStatus] = useState(false);
+
 	const options = {
 		fontSize: fontSize
 	}
@@ -51,32 +54,39 @@ function App({ProblemId}) {
 	// Function to clear the output screen
 	function clearOutput() {
 		setUserOutput("");
+		setIsSubmissionStatus(false);
+		setStatus("")
+		setExecutiontime(0)
 	}
 
 	useEffect(()=>{
 		if(JobId!=="" && isPolling){
 		const pollInterval = setInterval(async () => {
 			const { data: statusRes } = await axios.get(
-				`http://localhost:8080/codeRunner/status?jobId=${JobId}`,
-				);
+				`http://localhost:8080/codeRunner/status?jobId=${JobId}`);
 				const { success, job, error } = statusRes;
 				console.log(success);
 			if (success) {
-			  const { Status: jobStatus, Output: jobOutput, SubmittedAt, CompletedAt, StartedAt} = job;
+			  const { Status: jobStatus, SingleTestcaseStdOutput, MultipleTestcaseStdOutput, JobTypeByTestCase, CompletedAt, StartedAt} = job;
 			  console.log(jobStatus);
 			  if (jobStatus === "pending") return;
 			//   console.log("done");
 
 			  if(jobStatus==="success"){
-				setUserOutput(jobOutput);
+				if(JobTypeByTestCase==="MultipleTestCase"){
+					setSubmissionStatus(MultipleTestcaseStdOutput);
+					setIsSubmissionStatus(true);
+				}
+				else{
+					setUserOutput(SingleTestcaseStdOutput);
+				}
 				const time1 = new Date(StartedAt);
 				const time2 = new Date(CompletedAt);
 				setExecutiontime(Math.abs(time2-time1));
 			  }else{
-				setUserOutput(jobOutput);
+				// setUserOutput(jobOutput);
 			  }
-
-			  setStatus("executed");
+			  setStatus("Executed");
 			  setIsPolling(false);
 			  setLoading(false);
 			  clearInterval(pollInterval);
@@ -99,45 +109,70 @@ function App({ProblemId}) {
 				userTheme={userTheme} setUserTheme={setUserTheme}
 				fontSize={fontSize} setFontSize={setFontSize}
 			/>
-			<div className="space-y-4">
-				<div className="space-y-2">
-					<Editor
-						options={options}
-						height="70vh"
-						width="100%"
-						theme={userTheme}
-						language={userLang}
-						defaultLanguage="cpp"
-						value={userLang==="cpp"?bolilerplate.cpp:bolilerplate.python}
-						onChange={(value) => { setUserCode(value) }}
-					/>
-					<button className="btn btn-outline btn-success ml-2 px-4" onClick={() => compile()}>
-						Run
-					</button>
-				</div>
-				<div className="px-4 font-bold text-black">
-					<h4 className=''>Input:</h4>
-					<div className="input-box">
-						<textarea id="code-inp" className='border-2 border-gray-600 p-2 w-11/12' onChange=
-							{(e) => setUserInput(e.target.value)}>
-						</textarea>
+            <div className="space-y-4">
+                <div className="space-y-2">
+                    <Editor
+                        options={options}
+                        height="70vh"
+                        width="100%"
+                        theme={userTheme}
+                        language={userLang}
+                        defaultLanguage="cpp"
+                        value={userLang==="cpp"?bolilerplate.cpp:bolilerplate.python}
+                        onChange={(value) => { setUserCode(value) }}
+                    />
+                    <button className="btn btn-outline btn-success ml-2 px-4" onClick={() => compile()}>
+                        Run
+                    </button>
+                    <button className="btn btn-outline btn-primary ml-2 px-4" onClick={() => compile()}>
+                        Submit
+                    </button>
+                </div>
+                <div className="px-4 font-bold text-black">
+                    <h4 className='text-white'>Input:  <span><input type="checkbox"  name="" id="" /></span></h4>
+                    <div className="input-box">
+                        <textarea id="code-inp" className='border-2 border-gray-600 p-2 w-11/12' onChange=
+                            {(e) => setUserInput(e.target.value)}>
+                        </textarea>
+                    </div>
+                    <h4 className='text-white'>Output: {status!=="" ? status : null} {status!==""  && `${executiontime} ms`}  </h4>
+                    {
+                      loading ? (
+                        <div className="flex justify-center">
+                            <img src={spinner}  alt="Loading..." />
+                        </div>
+                    ) : (
+                        <div>
+                            <p className='p-2'>{userOutput} </p>
+                            <button className="px-4 btn btn-warning" onClick={() => { clearOutput() }}>
+                                Clear
+                            </button>
+                        </div>
+                    )}
+				{
+					isSubmissionStatus &&                 
+					<div className='w-full bg-slate-700 py-4 rounded-md mt-2'>
+					<div className='w-11/12 flex justify-between p-3 shadow-lg mx-auto bg-green-300 rounded-sm'>
+						<div className='font-semibold'><span className='text-xl font-bold'>{status}</span></div>
+						<div><span className='text-xl font-bold'>Submission Id</span>: {JobId}</div>
 					</div>
-					<h4>Output: {status!=="" ? status : null} {status!==""  && executiontime} </h4>
-					{
-					  loading ? (
-						<div className="flex justify-center">
-							<img src={spinner}  alt="Loading..." />
-						</div>
-					) : (
-						<div>
-							<p className='p-2'>{userOutput} </p>
-							<button className="px-4 btn btn-warning" onClick={() => { clearOutput() }}>
-								Clear
-							</button>
-						</div>
-					)}
+					<div className='w-11/12 grid mx-auto mt-2 rounded-sm border-2 text-white grid-cols-2'>
+						<div className='text-center'>Testcase #</div>
+						<div className='text-center'>Result(time)</div>
+						{
+							submissionStatus.map((status, index)=>{
+								return <>
+								<div className={`text-center ${status==="Correct"?"bg-green-500":"bg-red-500"} border-2`}>{index+1}</div>
+								<div className={`text-center ${status==="Correct"?"bg-green-500":"bg-red-500"} border-2`}>{status}</div>
+								</>						
+							})
+						}					
+					</div>
+					<div className='text-left px-14 py-4 text-3xl text-white'>Result : <span className='text-2xl text-red-600'>InCorrect</span></div>
 				</div>
-			</div>
+				}
+                </div>
+            </div>
 		</div>
 	);
 }
