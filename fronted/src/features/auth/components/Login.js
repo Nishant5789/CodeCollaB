@@ -5,7 +5,7 @@ import { ToastContainer } from "react-toastify";
 import { gettoastOptions, useStyles } from '../../../app/constant';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from "react-router-dom";
-import { loginUserAsync, selectError } from "../authSlice";
+import { getLoggedUserAsync, loginUserAsync, selectError } from "../authSlice";
 import { Grid, Paper, Typography, Avatar, Box, TextField, FormControlLabel, Checkbox, Button } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 import Copyright from "./Copyright";
@@ -57,6 +57,9 @@ const Login = () => {
       console.log("validated");
       console.log({username: UserName, password: Password});
       dispatch(loginUserAsync({ username: UserName, password: Password}));
+      setTimeout(() => {
+        dispatch(getLoggedUserAsync());
+      }, 1000);
     }
   };
 

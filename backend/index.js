@@ -24,6 +24,8 @@ const User = require("./models/User");
 // import routes
 const authRoute = require('./routes/auth');
 const codeRunnerRoute = require('./routes/codeRunner');
+const profileRoute = require('./routes/profile');
+
 const ACTIONS = require("./services/ACTIONS");
 
 
@@ -38,7 +40,7 @@ opts.secretOrKey = process.env.SECRET_KEY;
 
 // midleware
 app.use(express.json());
-// app.use(express.static("build"));
+app.use(express.static("../fronted/build"));
 app.use(cookieParser());
 app.use(session({
     secret: 'keyboard cat',
@@ -53,6 +55,7 @@ app.get('/', (req, res) => {
 });
 app.use('/auth', authRoute);
 app.use('/codeRunner', codeRunnerRoute);
+app.use('/profile',isAuth() ,profileRoute);
 
 // handle login 
 passport.use(new LocalStrategy(
