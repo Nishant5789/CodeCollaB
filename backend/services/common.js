@@ -1,7 +1,7 @@
 const passport = require("passport");
 
 module.exports.sanitizeUser = (user) => {
-  return { id: user.id };
+  return { id: user.id, UserName:user.UserName };
 };
 
 module.exports.isAuth = (req, res, done) => {

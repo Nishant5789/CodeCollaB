@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
 import { gettoastOptions, useStyles } from '../../../app/constant';
 import { useDispatch } from 'react-redux';
-import { createUserAsync } from '../authSlice';
+import { createUserAsync, getLoggedUserAsync } from '../authSlice';
 import { Grid, Paper, Typography, Avatar, Box, TextField, FormControlLabel, Checkbox, Button, InputLabel, Select, MenuItem } from "@mui/material";
 import Copyright from './Copyright';
 import LOGO from '../../../app/LOGO.png'
@@ -17,8 +17,8 @@ const Register = () => {
     lastname: "",
     username: "",
     email: "",
-    gender:"",
-    dob:"",
+    gender:"Male",
+    dob:"2004-12-02T18:00:00.000+00:00",
     password: "",
     confirm_password: "",
   }
@@ -78,8 +78,11 @@ const Register = () => {
     const { firstname: FirstName, lastname: LastName, username: UserName,gender:Gender, dob:DoB, email: Email, password: Password, confirm_password: ConfirmPassword } = registerData;
     if (handleValidation({ FirstName, LastName, UserName, Email, Password, ConfirmPassword })) {
       console.log("validated");
-      console.log({ FirstName, LastName, UserName, Email, Password, ConfirmPassword });
+      // console.log({ FirstName, LastName, UserName,Gender, DoB, Email, Password  });
       dispatch(createUserAsync({FirstName, LastName, UserName,Gender, DoB, Email, Password}));
+      setTimeout(() => {
+        dispatch(getLoggedUserAsync());
+      }, 1000);
     }
   };
 

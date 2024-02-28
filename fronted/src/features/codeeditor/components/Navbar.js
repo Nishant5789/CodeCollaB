@@ -1,12 +1,24 @@
 import React, { useState } from 'react';
 import { MenuIcon, XIcon, SearchIcon } from '@heroicons/react/solid';
+import { Link } from 'react-router-dom';
+import { selectLoggedInUser, signOutAsync } from '../../auth/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { Hidden } from '@mui/material';
 
 const Navbar = ({ onSearch }) => {
+  const dispatch = useDispatch();
+  const loggedInUser = useSelector(selectLoggedInUser);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLogoutBtn, setIsLogoutBtn] = useState(false);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
+
+  const handleLogout = ()=>{
+    dispatch(signOutAsync());
+    setIsLogoutBtn(false);
+  }
 
   return (
     <nav className="bg-gray-800 text-white px-4 py-2">
@@ -41,29 +53,34 @@ const Navbar = ({ onSearch }) => {
           className={`lg:flex lg:items-center ${isMobileMenuOpen ? 'block' : 'hidden'
             }`}
         >
-          {/* <a href="/" className="block lg:inline-block hover:text-gray-400 lg:mt-0 mr-4 ">
-            Home
-          </a> */}
-          <a href="/" className="block lg:inline-block hover:text-gray-400 lg:mt-0 mr-4">
+          <Link to="/" className="block lg:inline-block hover:text-gray-400 lg:mt-0 mr-4">
             Problems
-          </a>
-          <a href="/realtimeIDE" className="block lg:inline-block hover:text-gray-400 lg:mt-0 mr-4">
+          </Link>
+          <Link to="/realtimeIDE" className="block lg:inline-block hover:text-gray-400 lg:mt-0 mr-4">
             RealTimeEditor
-          </a>
-          <a href="/about" className="block lg:inline-block hover:text-gray-400 lg:mt-0 mr-2">
-            About
-          </a>
+          </Link>
         </div>
         <div>
-        <div class="flex flex-col items-center">
-          <div class="w-12 h-12 rounded-full overflow-hidden border-4 border-blue-500">
-            <img
-              class="w-full h-full object-cover"
-              src="https://via.placeholder.com/150"
-              alt="Profile"
-            />
-          </div>
-          <h1 class="font-semibold">John Doe</h1>
+        <div class="flex relative flex-col items-center">
+          {
+            loggedInUser==null ? 
+            <Link to="/Auth" className="block lg:inline-block hover:text-gray-400 lg:mt-0 mr-4">
+            Register Or login
+            </Link> :
+            <div className=' flex-col pr-4 flex items-center'>
+             <div onClick={()=>setIsLogoutBtn(!isLogoutBtn)} class="w-14 h-14 rounded-full overflow-hidden border-4 border-blue-500">
+              <img
+                class="w-full h-full object-cover"
+                src="https://via.placeholder.com/150"
+                alt="Profile"
+              />
+            </div>
+            <h1 class="font-semibold">{loggedInUser.UserName}</h1>
+              <div onClick={handleLogout} className={`${isLogoutBtn ? "":"hidden"}  absolute  top-16 bg-red-500 cursor-pointer hover:bg-red-600 active:bg-red-400 py-2 px-4 rounded-md text-white`}>
+                logOut
+              </div>
+            </div>
+          }
         </div>
         </div>
       </div>
