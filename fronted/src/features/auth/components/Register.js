@@ -17,8 +17,8 @@ const Register = () => {
     lastname: "",
     username: "",
     email: "",
-    gender:"Male",
-    dob:"2004-12-02T18:00:00.000+00:00",
+    gender:"",
+    dob:"",
     password: "",
     confirm_password: "",
   }

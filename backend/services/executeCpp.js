@@ -27,6 +27,21 @@ const executeCpp =  (Filepath, ProblemId, userInput) => {
     let outputArray = [];
 
     // console.log(`compile flie using command : g++ ${Filepath} -o ${outFilePath}`);
+
+    if(TestcaseData!=="getformapi"){
+      // handle userInput testcase
+      await fs.writeFileSync(`${outputPathDir}/${jobId}testcase.txt`, TestcaseData);
+      exec(
+        `g++ ${Filepath} -o ${outFilePath} && cd ${outputPathDir} && ./${jobId}.out <${jobId}testcase.txt`,
+        (error, stdout, stderr) => {
+          error && reject({ error, stderr });
+          stderr && reject(stderr);
+          // console.log("stdout", stdout);
+          resolve(stdout);
+        });
+    }
+    else{
+      // handle mutiple testcase for submission
     exec(
       `g++ ${Filepath} -o ${outFilePath}`,
       (error, stdout, stderr) => {
@@ -70,6 +85,7 @@ const executeCpp =  (Filepath, ProblemId, userInput) => {
         clearInterval(intervalId);
       }
     }, 2000);
+    }
   });
 };
 
