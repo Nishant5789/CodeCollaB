@@ -3,6 +3,7 @@ const Queue = require("bull");
 const Job = require("../models/Job");
 const { executeCpp } = require("./executeCpp");
 const Problem = require("../models/Problem");
+const { preprocessText } = require("./preprocessText");
 
 const jobQueue = new Queue("job-runner-queue");
 const NUM_WORKERS = 5;
@@ -17,11 +18,12 @@ const compareStdOutput = async (ProblemId, UserStdOutput)=>{
   console.log("UserStdOutput",UserStdOutput);
 
   for(let i=0; i<ActualStdOutput.length; i++){
-    console.log(ActualStdOutput[i],UserStdOutput[i]);
+    console.log(ActualStdOutput[i]);
+    console.log(UserStdOutput[i]);
     if(UserStdOutput[i]=="Error"){
       result[i]="Error";
     }
-    else if(ActualStdOutput[i].toLowerCase()===UserStdOutput[i].toLowerCase()){
+    else if(preprocessText(ActualStdOutput[i])==preprocessText(UserStdOutput[i])){
       result[i]="Correct";
     }
     else{

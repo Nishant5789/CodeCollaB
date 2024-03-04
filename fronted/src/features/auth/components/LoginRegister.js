@@ -10,7 +10,6 @@ import {  selectLoggedInUser } from "../authSlice";
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
-
     return (
         <div
             role="tabpanel"

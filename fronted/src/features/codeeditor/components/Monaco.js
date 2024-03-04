@@ -26,28 +26,42 @@ function App({ProblemId}) {
 
 	const [submissionStatus, setSubmissionStatus] = useState([]);
 	const [isSubmissionStatus, setIsSubmissionStatus] = useState(false);
+	const [isUsercheckbox, setIsUsercheckbox] = useState(false);
+
+
 
 	const options = {
 		fontSize: fontSize
 	}
 
-	function compile() {
+	function compile(btntype) {
 		setLoading(true);
 		// console.log(userCode);
-		if (userCode === ``) {
-			return
-		}
 		let isUserInput = false;
-		if(userInput!==""){
+		if(isUsercheckbox){
 			isUserInput=true;
 		}
-		dispatch(ExcuteCodeAsync({
-			ProblemId,
-			Language:userLang,
-			codeData:userCode,
-			userInput,
-			isUserInput
-		}))
+
+		if(btntype==="submit"){
+			dispatch(ExcuteCodeAsync({
+				ProblemId,
+				Language:userLang,
+				codeData:userCode,
+				userInput,
+				isUserInput
+			}))
+		}
+		else{
+			if (userCode === ``) return;
+			
+			dispatch(ExcuteCodeAsync({
+				ProblemId,
+				Language:userLang,
+				codeData:userCode,
+				userInput,
+				isUserInput
+			}))
+		}
 		setIsPolling(true);
 	}
 
@@ -121,29 +135,31 @@ function App({ProblemId}) {
                         value={userLang==="cpp"?bolilerplate.cpp:bolilerplate.python}
                         onChange={(value) => { setUserCode(value) }}
                     />
-                    <button className="btn btn-outline btn-success ml-2 px-4" onClick={() => compile()}>
+                    <button className="btn btn-outline btn-success ml-2 px-4" onClick={() => compile("run")}>
                         Run
                     </button>
-                    <button className="btn btn-outline btn-primary ml-2 px-4" onClick={() => compile()}>
+                    <button className="btn btn-outline btn-primary ml-2 px-4" onClick={() => compile("submit")}>
                         Submit
                     </button>
                 </div>
                 <div className="px-4 font-bold text-black">
-                    <h4 className='text-white'>Input:  <span><input type="checkbox"  name="" id="" /></span></h4>
+					<div className='flex mb-2 items-center gap-x-2'>
+                    <h4 className='text-white text-xl'>Input: </h4><input type="checkbox" onChange={()=>setIsUsercheckbox(!isUsercheckbox)} name="" id="" />
+					</div>
                     <div className="input-box">
                         <textarea id="code-inp" className='border-2 border-gray-600 p-2 w-11/12' onChange=
                             {(e) => setUserInput(e.target.value)}>
                         </textarea>
                     </div>
-                    <h4 className='text-white'>Output: {status!=="" ? status : null} {status!==""  && `${executiontime} ms`}  </h4>
+                    <h4 className='text-white text-xl'>Output: {status!=="" ? status : null} {status!==""  && `${executiontime} ms`}  </h4>
                     {
                       loading ? (
                         <div className="flex justify-center">
                             <img src={spinner}  alt="Loading..." />
                         </div>
                     ) : (
-                        <div>
-                            <p className='p-2'>{userOutput} </p>
+                        <div className=''>
+                            <p className='px-2 py-4 border-2 mb-2 rounded-md w-11/12 text-white '>{userOutput} </p>
                             <button className="px-4 btn btn-warning" onClick={() => { clearOutput() }}>
                                 Clear
                             </button>
