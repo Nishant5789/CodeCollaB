@@ -34,7 +34,7 @@ function LoginRegister() {
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
-    const tabStyle = { width: 380, margin: "50px auto 0px auto" }
+    const tabStyle = { width: 500, margin: "30px auto 0px auto" }
     return (
         <>
         {user && <Navigate to="/" replace={true} />}
