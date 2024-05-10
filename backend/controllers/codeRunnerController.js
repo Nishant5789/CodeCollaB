@@ -15,11 +15,22 @@ module.exports.AddedProblem = async (req, res, next)=>{
         return res.status(400).json(error);
     }
 }
+module.exports.fetchAllProblem = async (req, res, next)=>{
+  try {
+    const problems = await Problem.find();
+      return res.status(200).json(problems);
+  } catch (error) {
+      console.log(error);
+      return res.status(400).json(error);
+  }
+}
+
 module.exports.fetchProblem = async (req, res, next)=>{
   const {ProblemId} = req.params;
   console.log(ProblemId);
   try {
     const problem = await Problem.findById(ProblemId);
+    // console.log(problem);
       return res.status(201).json(problem);
   } catch (error) {
       console.log(error);
@@ -47,8 +58,8 @@ module.exports.checkJobStatus =  async (req, res) => {
 
 module.exports.executeCode = async(req, res, next)=>{
 
-    const { Language = "cpp", ProblemId, codeData } = req.body;
-    console.log(codeData);
+    const { Language = "cpp", ProblemId, codeData, userInput, isUserInput } = req.body;
+    // console.log(codeData);
 
     console.log(Language, "Length:", codeData.length);
   
@@ -62,6 +73,12 @@ module.exports.executeCode = async(req, res, next)=>{
 
     const job = await new Job({ Language, ProblemId, Filepath }).save();
     const jobId = job["id"];
-    addJobToQueue(jobId, ProblemId);
+
+    // console.log(isUserInput);
+    if(isUserInput)
+      addJobToQueue(jobId, ProblemId, userInput);
+    else
+      addJobToQueue(jobId, ProblemId, null);
+
     res.status(201).json({ jobId });
 }

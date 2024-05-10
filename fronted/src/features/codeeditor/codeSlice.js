@@ -1,8 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { ExecuteCode, fetchCodeStatement } from './codeApi';
+import { ExecuteCode, fetchAllProblems, fetchCodeStatement } from './codeApi';
 
 const initialState = {
   status: 'idle',
+  allProblems:[],
   currentProblemStatement:{},
   currentJobId:"",
   currentJobOutput:"",
@@ -35,6 +36,13 @@ export const fetchCodeStatusAsync = createAsyncThunk(
     }
   );
 
+export const fetchAllProblemAsync = createAsyncThunk(
+  'codeRunner/fetchAllProblem',
+  async () => {
+    const {data} = await fetchAllProblems();
+    return data;
+  }
+);
 
 export const codeSlice = createSlice({
   name: 'codeRunner',
@@ -43,6 +51,14 @@ export const codeSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(fetchAllProblemAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchAllProblemAsync.fulfilled, (state, action) => {
+        state.status = 'idle';
+        // console.log(action.payload);
+        state.allProblems = action.payload;
+      })
       .addCase(fetchProblemAsync.pending, (state) => {
         state.status = 'loading';
       })
@@ -81,5 +97,6 @@ export const codeSlice = createSlice({
 export const selectJobId = (state)=>state.code.currentJobId;
 export const selectJobStatus = (state)=>state.code.currentJobStatus;
 export const selectProblemStatement = (state)=>state.code.currentProblemStatement;
+export const selectAllProblems = (state)=>state.code.allProblems;
 
 export default codeSlice.reducer;

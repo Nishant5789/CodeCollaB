@@ -1,5 +1,5 @@
 export function createUser(userData) {
-    console.log(userData);
+    // console.log(userData);
     return new Promise(async (resolve) => {
         const response = await fetch('http://localhost:8080/auth/signup', {
             method: 'POST',
@@ -11,11 +11,11 @@ export function createUser(userData) {
     });
 }
 
-export function checkUser(loginInfo) {
+export function getLoggedUser(loginInfo) {
     return new Promise(async (resolve, reject) => {
     try{
-        const response = await fetch('http://localhost:8080/auth/check', {
-            method: 'POST',
+        const response = await fetch('http://localhost:8080/profile/getLoggedUser', {
+            method: 'GET',
             body: JSON.stringify(loginInfo),
             headers: { 'content-type': 'application/json' },
         });
@@ -24,14 +24,14 @@ export function checkUser(loginInfo) {
             resolve({ data });
           } else {
             const error = await response.text();
-            // console.log("call",JSON.parse(error).message);
-            reject(JSON.parse(error).message);
+            reject(error);  
         }
     } catch (error) {
           reject( error );
         }
     })
 }
+
 
 
 export function loginUser(loginInfo) {

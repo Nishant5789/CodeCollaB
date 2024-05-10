@@ -8,10 +8,8 @@ module.exports.creatUser = async (req, res) => {
         const salt = crypto.randomBytes(16);
         crypto.pbkdf2(req.body.Password, salt, 310000, 32, 'sha256', async function (err, hashedPassword) {
             const user = new User({ ...req.body, Password: hashedPassword, salt });
-            console.log(user);
             const docs = await user.save();
-
-            // res.status(200).json(docs);
+            console.log(sanitizeUser(docs));
 
             // which used to create a sesssion after register 
             // this also called serilize user and desialize user during try to create session 
@@ -48,3 +46,7 @@ module.exports.checkUser = async (req, res, next) => {
         console.log(error);
     }
 }
+
+
+  
+

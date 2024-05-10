@@ -1,6 +1,7 @@
 .navbar {
 	display: flex;
 	align-items: center;
+	justify-content: space-around;
 	padding-left: 20px;
 	height: 50px;
 	text-align: center;
