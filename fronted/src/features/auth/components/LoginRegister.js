@@ -20,7 +20,7 @@ function CustomTabPanel(props) {
         >
             {value === index && (
                 <Box>
-                    <Typography>{children}</Typography>
+                    <Typography  >{children}</Typography>
                 </Box>
             )}
         </div>
@@ -34,13 +34,18 @@ function LoginRegister() {
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
-    const tabStyle = { width: 380, margin: "50px auto 0px auto" }
+    const tabStyle = { width: 380, margin: "50px auto 0px auto"}
     return (
         <>
         {user && <Navigate to="/" replace={true} />}
         <div>
             <div style={tabStyle}>
-                <Tabs variant="fullWidth" value={value} onChange={handleChange} aria-label="disabled tabs example">
+                <Tabs variant="fullWidth" value={value} onChange={handleChange} 
+                sx={{ 
+                    '.MuiTab-root': { color: '#fff' },       // Tab text color
+                    '.MuiTabs-indicator': { backgroundColor: '#fff' }  // Indicator color
+                  }}
+                aria-label="disabled tabs example">
                     <Tab label="Log In" />
                     <Tab label="Register" />
                 </Tabs>

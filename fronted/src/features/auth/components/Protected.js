@@ -6,9 +6,9 @@ import { useEffect } from 'react';
 function Protected({ children }) {
   const user = useSelector(selectLoggedInUserToken);
 
-  if (!user) {
-    return <Navigate to="/Auth" replace={true}></Navigate>;
-  }
+  // if (!user) {
+  //   return <Navigate to="/Auth" replace={true}></Navigate>;
+  // }
   return children;
 }
 

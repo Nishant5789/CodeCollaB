@@ -73,7 +73,6 @@ const Login = () => {
                 <Grid align="center">
                     <Avatar sx={{ width:100, height:100, my:1, bgcolor:'palegoldenrod' }}> <img src={LOGO} alt="logo" style={{ width: '100%', height: 'auto'}} ></img> </Avatar>
                     <Typography component= "h1" variant="h5" style={{marginBottom:'2px'}}>CodeCollab</Typography>
-                    <Typography component="h1" variant="h5" style={{marginTop:'10px'}}>Login</Typography>
                     <Box component="form" noValidate sx={{ mt: 4 }}>
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
@@ -99,27 +98,15 @@ const Login = () => {
                             </Grid>
                         </Grid>
                     </Box>
-                    <Grid xs={12} sx={{ mt: 3 }}>
+                    {/* <Grid xs={12} sx={{ mt: 3 }}>
                         <FormControlLabel labelPlacement="end"
                             control={<Checkbox value="allowExtraEmails" color="primary" />}
                             label={<div style={{ textAlign: "left" }}>Remember me</div>}
                         />
-                    </Grid>
+                    </Grid> */}
                     <Button type="button" onClick={handdleLogin} fullWidth variant="contained" sx={{ mt: 3, mb: 4, bgcolor: "secondary.main" }}>
                         Sign In
                     </Button>
-                    <Grid container>
-                        <Grid item xs={6}>
-                            <Link href="#">
-                                Forgot Password
-                            </Link>
-                        </Grid>
-                        <Grid item xs={6}>
-                            {/* <Link href="#" onClick={() => handleChange('event', 1)} variant="body2"> */}
-                                No account? Sign up
-                            {/* </Link> */}
-                        </Grid>
-                    </Grid>
                 </Grid>
             </Paper>
             <Grid2 sx={{ mt: 2}}>
