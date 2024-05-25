@@ -24,7 +24,7 @@ const executeCpp =  (Filepath, ProblemId, userInput) => {
     const length = Testcase.TestCasesInput.length
     const statusTestcases = Array.from({ length }, () => "Not-Executed");
     console.log(statusTestcases);
-    let outputArray = [];
+    let outputArray = Array.from({ length }, () => "");
 
     // console.log(`compile flie using command : g++ ${Filepath} -o ${outFilePath}`);
 
@@ -48,29 +48,28 @@ const executeCpp =  (Filepath, ProblemId, userInput) => {
         error && reject({ error, stderr });
         stderr && reject(stderr);
         console.log("stdout at compile time", stdout);
-        // resolve(stdout);
       });
 
     await setTimeout(async() => {
         for(let i=0;i<Testcase.TestCasesInput.length;i++){
           testcasefilepath = `${outputPathDir}/${jobId}testcase.txt`;
-          await replaceFileContent(testcasefilepath, Testcase.TestCasesInput[i]);
+          // await replaceFileContent(testcasefilepath, Testcase.TestCasesInput[i]);
           exec(
-            `cd ${outputPathDir} && ./${jobId}.out <${jobId}testcase.txt`,
+            `cd ${outputPathDir} && echo "${Testcase.TestCasesInput[i]}" | ./${jobId}.out`, 
             (error, stdout, stderr) => {
               if(error){
                 console.log("error", error);
                 statusTestcases[i]="Executed";
-                outputArray.push("error");
+                outputArray[i]="error";
               }
               else if(stderr){
                 console.log("stderr", stderr);
                 statusTestcases[i]="Executed";
-                outputArray.push("stderror");
+                outputArray[i]="stderror";
               }
               else{
                 console.log(`stdout-${i}`, stdout);
-                outputArray.push(stdout);
+                outputArray[i]=stdout;
                 statusTestcases[i]="Executed";
               }              
             }

@@ -49,7 +49,7 @@ const Problems = ({ selectedCategory, currentPage, setCurrentPage, searchQuery }
     <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1">
     {Object.keys(chunkedProblems).length && chunkedProblems[currentPage]?.map((problem, index) => (
     <Link to={`/${problem.id}/`}>
-      <div key={index} className="bg-gray-100 text-white p-4 grid grid-cols-1 sm:grid-cols-3 sm:px-12 rounded-md shadow-md mb-4">
+      <div key={index} className="bg-sky-300 text-white p-4 grid grid-cols-1 sm:grid-cols-3 sm:px-12 rounded-md shadow-md mb-4">
         <div className="flex items-center">
           {/* {problem.status === 'solved' && ( */}
             <span className="text-white bg-green-500 rounded-3xl text-xl font-bold mr-4">
