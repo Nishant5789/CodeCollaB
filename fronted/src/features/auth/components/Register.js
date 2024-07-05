@@ -1,14 +1,30 @@
-import React, { useState } from 'react'
-import { Link, Navigate } from 'react-router-dom'
+import React, { useState } from "react";
+import { Link, Navigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
-import { gettoastOptions, useStyles } from '../../../app/constant';
-import { useDispatch } from 'react-redux';
-import { createUserAsync, getLoggedUserAsync } from '../authSlice';
-import { Grid, Paper, Typography, Avatar, Box, TextField, FormControlLabel, Checkbox, Button, InputLabel, Select, MenuItem } from "@mui/material";
-import Copyright from './Copyright';
-import LOGO from '../../../app/LOGO.png'
+import { gettoastOptions, useStyles } from "../../../app/constant";
+import { useDispatch } from "react-redux";
+import { createUserAsync } from "../authSlice";
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import {
+  Grid,
+  Paper,
+  Typography,
+  Avatar,
+  Box,
+  TextField,
+  FormControlLabel,
+  Checkbox,
+  Button,
+  InputLabel,
+  Select,
+  MenuItem,
+  FormControl,
+} from "@mui/material";
+import Copyright from "./Copyright";
+import LOGO from "../../../app/LOGO.png";
 
 const Register = () => {
   const dispatch = useDispatch();
@@ -17,18 +33,21 @@ const Register = () => {
     lastname: "",
     username: "",
     email: "",
-    gender:"Male",
-    dob:"2004-12-02T18:00:00.000+00:00",
+    gender: "",
+    dob: "",
     password: "",
     confirm_password: "",
-  }
+  };
 
   const [registerData, setRegisterData] = useState(registerObject);
 
   const handleChange = (event) => {
     console.log(registerData);
-    setRegisterData({ ...registerData, [event.target.name]: event.target.value });
-  }
+    setRegisterData({
+      ...registerData,
+      [event.target.name]: event.target.value,
+    });
+  };
 
   const handleValidation = ({
     FirstName,
@@ -42,28 +61,26 @@ const Register = () => {
     if (Email === "") {
       toast.error("Email field is require", gettoastOptions());
       return false;
-    }
-    else if (FirstName === "" || LastName === "") {
+    } else if (FirstName === "" || LastName === "") {
       toast.error("Name field is require", gettoastOptions());
       return false;
-    }
-    else if (UserName === "") {
+    } else if (UserName === "") {
       toast.error("UserName field is require", gettoastOptions());
       return false;
-    }
-    else if (Password === "") {
+    } else if (Password === "") {
       toast.error("Password field is require", gettoastOptions());
       return false;
-    }
-    else if (ConfirmPassword === "") {
+    } else if (ConfirmPassword === "") {
       toast.error("All field is require", gettoastOptions());
       return false;
-    }
-    else if (Password !== ConfirmPassword) {
+    } else if (Password !== ConfirmPassword) {
       toast.error("Password didn't match", gettoastOptions());
       return false;
     } else if (Password.length <= 4) {
-      toast.error("Password Length should be greater than 4", gettoastOptions());
+      toast.error(
+        "Password Length should be greater than 4",
+        gettoastOptions()
+      );
       return false;
     } else if (!emailRegex.test(Email)) {
       toast.error("Email format should be right", gettoastOptions());
@@ -75,21 +92,51 @@ const Register = () => {
   const handdleRegister = (e) => {
     e.preventDefault();
     console.log("submit");
-    const { firstname: FirstName, lastname: LastName, username: UserName,gender:Gender, dob:DoB, email: Email, password: Password, confirm_password: ConfirmPassword } = registerData;
-    if (handleValidation({ FirstName, LastName, UserName, Email, Password, ConfirmPassword })) {
+    const {
+      firstname: FirstName,
+      lastname: LastName,
+      username: UserName,
+      gender: Gender,
+      dob: DoB,
+      email: Email,
+      password: Password,
+      confirm_password: ConfirmPassword,
+    } = registerData;
+    if (
+      handleValidation({
+        FirstName,
+        LastName,
+        UserName,
+        Email,
+        Password,
+        ConfirmPassword,
+      })
+    ) {
       console.log("validated");
-      // console.log({ FirstName, LastName, UserName,Gender, DoB, Email, Password  });
-      dispatch(createUserAsync({FirstName, LastName, UserName,Gender, DoB, Email, Password}));
-      setTimeout(() => {
-        dispatch(getLoggedUserAsync());
-      }, 1000);
+      console.log({
+        FirstName,
+        LastName,
+        UserName,
+        Email,
+        Password,
+        ConfirmPassword,
+      });
+      dispatch(
+        createUserAsync({
+          FirstName,
+          LastName,
+          UserName,
+          Gender,
+          DoB,
+          Email,
+          Password,
+        })
+      );
     }
   };
 
-
   const classes = useStyles();
-  const paperStyle = { padding: '20px 15px', width: 350, margin: "0px auto" }
-
+  const paperStyle = { padding: "20px 15px", width: 500, margin: "0px auto" };
 
   return (
     <>
@@ -97,13 +144,27 @@ const Register = () => {
         <div className={classes.background}></div>
         <Paper elevation={18} style={paperStyle}>
           <Grid align="center">
-            <Avatar sx={{ width: 100, height: 100, my: 1, bgcolor: 'paleturquoise' }}> <img src={LOGO} alt="logo" style={{ width: '100%', height: 'auto' }} ></img></Avatar>
-            <Typography component="h1" variant="h5" style={{ marginBottom: '2px' }}>CodeCollab</Typography>
-            <Typography component="h1" variant="h5" style={{ marginTop: '5px' }}>Sign up</Typography>
-            <Box component="form" noValidate sx={{ mt: 4 }}>
+            <Avatar
+              sx={{ width: 90, height: 90, my: 2, bgcolor: "paleturquoise" }}
+            >
+              {" "}
+              <img
+                src={LOGO}
+                alt="logo"
+                style={{ width: "100%", height: "auto" }}
+              ></img>
+            </Avatar>
+            <Typography
+              component="h1"
+              variant="h5"
+              style={{ marginBottom: "2px" }}
+            >
+              CodeCollab 
+            </Typography>
+            <Box component="form" noValidate sx={{ mt: 2 }}>
               <Grid container spacing={1}>
                 <Grid item xs={12} sm={6}>
-                  <TextField
+                  <TextField 
                     name="firstname"
                     required
                     fullWidth
@@ -113,7 +174,7 @@ const Register = () => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <TextField
+                  <TextField 
                     name="lastname"
                     required
                     fullWidth
@@ -122,8 +183,8 @@ const Register = () => {
                     onChange={handleChange}
                   />
                 </Grid>
-                <Grid item xs={12}>
-                  <TextField
+                <Grid item xs={12} sm={6}>
+                  <TextField size = "small"
                     name="username"
                     required
                     fullWidth
@@ -132,8 +193,8 @@ const Register = () => {
                     onChange={handleChange}
                   />
                 </Grid>
-                <Grid item xs={12}>
-                  <TextField
+                <Grid item xs={12} sm={6}>
+                  <TextField size = "small"
                     name="email"
                     required
                     fullWidth
@@ -142,8 +203,8 @@ const Register = () => {
                     onChange={handleChange}
                   />
                 </Grid>
-                <Grid item xs={12}>
-                  <TextField
+                <Grid item xs={12} sm={6}>
+                  <TextField size = "small" 
                     name="password"
                     align="left"
                     fullWidth
@@ -152,8 +213,8 @@ const Register = () => {
                     onChange={handleChange}
                   />
                 </Grid>
-                <Grid item xs={12}>
-                  <TextField
+                <Grid item xs={12} sm={6}>
+                  <TextField size = "small"
                     name="confirm_password"
                     align="left"
                     fullWidth
@@ -162,22 +223,39 @@ const Register = () => {
                     onChange={handleChange}
                   />
                 </Grid>
+                <Grid item xs={12} sm={6}>
+                  <FormControl sx={{minWidth: 150 }} size="small" fullWidth>
+                    <InputLabel id="select-gender">Gender</InputLabel>
+                    <Select
+                      labelId="select-gender"
+                      id="gender"
+                      name="gender"
+                      label="Gender"
+                      onChange={handleChange}
+                    >
+                      <MenuItem value="MALE">Male</MenuItem>
+                      <MenuItem value="FEMALE">Female</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid> 
+                <Grid item xs={12} sm={6} >
+                  <LocalizationProvider dateAdapter={AdapterDayjs} >
+                    <DatePicker 
+                      slotProps={{ textField: { size: "small", placeholder:"DoB", fullWidth:"1px" } }}
+                    ></DatePicker>
+                  </LocalizationProvider>
+                </Grid>
               </Grid>
             </Box>
-            <Grid xs={12} sx={{ mt: 1 }}>
-              <FormControlLabel
-                control={<Checkbox value="allowExtraEmails" color="primary" />}
-                label={<div style={{ textAlign: "left" }}>Subcrive to promos,events and offers.</div>}
-              />
-            </Grid>
-            <Button type="button" onClick={handdleRegister} fullWidth variant="contained" sx={{ my: 1, bgcolor: "secondary.main" }}>
+            <Button
+              type="button"
+              onClick={handdleRegister}
+              fullWidth
+              variant="contained"
+              sx={{ my: 1, bgcolor: "secondary.main" }}
+            >
               Sign Up
             </Button>
-            <Grid>
-              {/* <Link onClick={()=>handleChange('event',0)} href="#" variant="body2" > */}
-              Already have an account? Sign in
-              {/* </Link> */}
-            </Grid>
           </Grid>
         </Paper>
         <Grid sx={{ mt: 3 }}>
@@ -186,7 +264,7 @@ const Register = () => {
       </Grid>
       <ToastContainer />
     </>
-  )
-}
+  );
+};
 
-export default Register
+export default Register;

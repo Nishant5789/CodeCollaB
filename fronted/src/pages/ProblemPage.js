@@ -7,7 +7,7 @@ import { fetchProblemAsync, selectProblemStatement } from '../features/codeedito
 
 const ProblemPage = () => {
     const {ProblemId} = useParams();
-    console.log(ProblemId);
+    // console.log(ProblemId);
     const dispatch = useDispatch();
 
     const ProblemData = useSelector(selectProblemStatement);
@@ -16,38 +16,40 @@ const ProblemPage = () => {
 
     function addLineBreaks(str) {
       // Use regular expression to replace "\n" with "\n" followed by an actual line break
-      return str.replace(/\\n/g, "\n");
+      const update = str.replace(/\\n/g, "<br>")
+      console.log(update);
+      return update;
     }
     
   useEffect(()=>{
     // console.log(ProblemId);
-    if(ProblemId!="")
+    if(ProblemId!=="")
       dispatch(fetchProblemAsync(ProblemId));
   },[ProblemId])
 
   return (
-    <div className="flex flex-wrap  ">
+    <div className="flex flex-wrap">
     {
         Object.keys(ProblemData).length &&  
-        <div className="w-full  p-4 md:w-2/5">
+        <div className="w-full h-screen scroll-smooth overflow-y-auto p-4 md:w-5/12">
           <div className="mb-4">
             <h2 className="text-4xl bg-red-500 rounded-md p-4 text-center font-bold">{ProblemName}</h2>
           </div>
           <div className="mb-4 border-4 border-purple-600 p-2">
             <h2 className="text-2xl font-bold">Problem Statement : </h2>
-            <p className='p-2'>{addLineBreaks(ProblemStatement)}</p>
+            <div className="text-sm font-bold" dangerouslySetInnerHTML={{ __html: addLineBreaks(ProblemStatement) }} />
           </div>
           <div className="mb-4 border-4 border-purple-600 p-2">
             <h2 className="text-2xl font-bold">Input Format :</h2>
-            <p className='p-2'>{InputFormat}</p>
+            <div  className="text-sm font-bold" dangerouslySetInnerHTML={{ __html: addLineBreaks(InputFormat) }} />
           </div>
           <div className="mb-4 border-4 border-purple-600 p-2">
             <h2 className="text-2xl font-bold">Output Format :</h2>
-            <p className='p-2'>{OutputFormat}</p>
+            <div className="text-sm font-bold" dangerouslySetInnerHTML={{ __html: addLineBreaks(OutputFormat) }} />
           </div>
           <div className='space-y-2' >
             {
-              Array.from({ length: TestCasesInput.length},(_, index) => index + 1 ).map((i, data)=>
+              Array.from({ length: TestCasesInput.length},(_, index) => index + 1 ).slice(0,5).map((i, data)=>
               <div className='p-2 border-4 border-yellow-400'>
                 <h1>Input :</h1>
                 <p>{TestCasesInput[i-1]}</p>
@@ -60,7 +62,7 @@ const ProblemPage = () => {
     }
 
       {/* Right column for code editor */}
-      <div className="w-full md:w-3/5">
+      <div className="w-full md:w-7/12">
         <Monaco ProblemId={ProblemId}/>
       </div>
     </div>   

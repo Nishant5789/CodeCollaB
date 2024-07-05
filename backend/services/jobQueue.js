@@ -15,15 +15,12 @@ const compareStdOutput = async (ProblemId, UserStdOutput)=>{
   const length = ActualStdOutput.length;
   const result = Array.from({ length }, () => "Not Executed");
   // console.log("result",result);
-  console.log("UserStdOutput",UserStdOutput);
+  console.log("ActualStdOutput",ActualStdOutput);
 
   for(let i=0; i<ActualStdOutput.length; i++){
     console.log(ActualStdOutput[i]);
     console.log(UserStdOutput[i]);
-    if(UserStdOutput[i]=="Error"){
-      result[i]="Error";
-    }
-    else if(preprocessText(ActualStdOutput[i])==preprocessText(UserStdOutput[i])){
+     if(preprocessText(ActualStdOutput[i])==preprocessText(UserStdOutput[i])){
       result[i]="Correct";
     }
     else{
@@ -69,10 +66,10 @@ jobQueue.process(NUM_WORKERS, async ({ data }) => {
   } catch (err) {
     console.log("err",err);
     job["CompletedAt"] = new Date();
-    job["Output"] = JSON.stringify(err);
+    job["ErrorOutput"] = JSON.stringify(err);
     job["Status"] = "error";
     await job.save();
-    throw Error(JSON.stringify(err));
+    // throw Error(JSON.stringify(err));
   }
 });
 

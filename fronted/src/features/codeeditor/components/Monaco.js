@@ -26,8 +26,6 @@ function App({ProblemId}) {
 
 	const [submissionStatus, setSubmissionStatus] = useState([]);
 	const [isSubmissionStatus, setIsSubmissionStatus] = useState(false);
-	const [isUsercheckbox, setIsUsercheckbox] = useState(false);
-
 
 
 	const options = {
@@ -37,29 +35,21 @@ function App({ProblemId}) {
 	function compile(btntype) {
 		setLoading(true);
 		// console.log(userCode);
-		let isUserInput = false;
-		if(isUsercheckbox){
-			isUserInput=true;
-		}
-
 		if(btntype==="submit"){
 			dispatch(ExcuteCodeAsync({
 				ProblemId,
 				Language:userLang,
 				codeData:userCode,
-				userInput,
-				isUserInput
+				isUserInput:false
 			}))
 		}
 		else{
-			if (userCode === ``) return;
-			
 			dispatch(ExcuteCodeAsync({
 				ProblemId,
 				Language:userLang,
 				codeData:userCode,
 				userInput,
-				isUserInput
+				isUserInput:true
 			}))
 		}
 		setIsPolling(true);
@@ -81,7 +71,7 @@ function App({ProblemId}) {
 				const { success, job, error } = statusRes;
 				console.log(success);
 			if (success) {
-			  const { Status: jobStatus, SingleTestcaseStdOutput, MultipleTestcaseStdOutput, JobTypeByTestCase, CompletedAt, StartedAt} = job;
+			  const { Status: jobStatus, SingleTestcaseStdOutput, MultipleTestcaseStdOutput, JobTypeByTestCase, ErrorOutput, CompletedAt, StartedAt} = job;
 			  console.log(jobStatus);
 			  if (jobStatus === "pending") return;
 			//   console.log("done");
@@ -98,7 +88,7 @@ function App({ProblemId}) {
 				const time2 = new Date(CompletedAt);
 				setExecutiontime(Math.abs(time2-time1));
 			  }else{
-				// setUserOutput(jobOutput);
+				setUserOutput(ErrorOutput);
 			  }
 			  setStatus("Executed");
 			  setIsPolling(false);
@@ -144,7 +134,7 @@ function App({ProblemId}) {
                 </div>
                 <div className="px-4 font-bold text-black">
 					<div className='flex mb-2 items-center gap-x-2'>
-                    <h4 className='text-white text-xl'>Input: </h4><input type="checkbox" onChange={()=>setIsUsercheckbox(!isUsercheckbox)} name="" id="" />
+                    <h4 className='text-white text-xl'>Input: </h4>
 					</div>
                     <div className="input-box">
                         <textarea id="code-inp" className='border-2 border-gray-600 p-2 w-11/12' onChange=

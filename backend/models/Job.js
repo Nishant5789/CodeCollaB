@@ -39,7 +39,7 @@ const jobSchema = mongoose.Schema({
   MultipleTestcaseStdOutput:[{
     type: String
   }],
-  Output:{
+  ErrorOutput:{
     type: String
   }
 });

@@ -16,10 +16,10 @@ const problemSchema = mongoose.Schema(
             enum: ["Easy", "Medium", "Hard"],
         },
         InputFormat: {
-            type: [String],
+            type: String,
         },
         OutputFormat: {
-            type: [String],
+            type: String,
         },
         TestCasesInput: {
             type: [String],

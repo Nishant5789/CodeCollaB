@@ -58,7 +58,7 @@ module.exports.checkJobStatus =  async (req, res) => {
 
 module.exports.executeCode = async(req, res, next)=>{
 
-    const { Language = "cpp", ProblemId, codeData, userInput, isUserInput } = req.body;
+    const { Language = "cpp", ProblemId, codeData, userInput = null, isUserInput } = req.body;
     // console.log(codeData);
 
     console.log(Language, "Length:", codeData.length);
